@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dhuha TopUp - Gaming Neon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+ margin:0;
+ font-family:Arial,Helvetica,sans-serif;
+ color:#fff;
+ background:linear-gradient(120deg,#050014,#001f3f,#0a0028);
+ background-size:400% 400%;
+ animation:bg 12s infinite alternate;
+}
+@keyframes bg{
+ 0%{background-position:0% 50%}
+ 100%{background-position:100% 50%}
+}
+header{
+ text-align:center;
+ padding:20px;
+ font-size:26px;
+ font-weight:bold;
+ text-shadow:0 0 10px #0ff,0 0 25px #00f;
+}
+.container{max-width:900px;margin:auto;padding:20px;}
+.games{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+ gap:15px;
+}
+.game{
+ background:rgba(0,0,0,.6);
+ border:2px solid #00ffff;
+ border-radius:15px;
+ padding:15px;
+ text-align:center;
+ cursor:pointer;
+ transition:.3s;
+ box-shadow:0 0 15px #00ffff;
+}
+.game:hover{transform:scale(1.05);box-shadow:0 0 30px #00ffff;}
+.game img{
+ width:100px;height:100px;object-fit:contain;
+ filter:drop-shadow(0 0 10px #00ffff);
+}
+.card{
+ margin-top:20px;
+ background:rgba(0,0,0,.65);
+ border-radius:15px;
+ padding:20px;
+ box-shadow:0 0 20px #00ffff;
+}
+input,select,button{
+ width:100%;padding:12px;margin-top:12px;
+ border-radius:8px;border:none;font-size:15px;
+}
+button{
+ background:#00ffff;font-weight:bold;cursor:pointer;
+ box-shadow:0 0 15px #00ffff;
+}
+button:hover{background:#00cccc;}
+.paket{
+ border:1px solid #00ffff;
+ border-radius:8px;
+ padding:10px;
+ margin:6px 0;
+ cursor:pointer;
+}
+.paket:hover,.paket.active{background:#00ffff;color:#000;}
+footer{text-align:center;padding:20px;color:#aaa;}
+</style>
+</head>
+
+<body>
+<header>Dhuha TopUp ⚡ Gaming Neon</header>
+
+<div class="container">
+<div class="games">
+ <div class="game" onclick="selectGame('Free Fire')">
+  <img src="https://i.ibb.co/1fytfL9/ff.png"><br>Free Fire
+ </div>
+ <div class="game" onclick="selectGame('Mobile Legends')">
+  <img src="https://i.ibb.co/3s8F0x1/ml.png"><br>Mobile Legends
+ </div>
+ <div class="game" onclick="selectGame('Bloods Strike')">
+  <img src="https://i.ibb.co/Y7pFGr2/bloods.png"><br>Bloods Strike
+ </div>
+ <div class="game" onclick="selectGame('Pulsa')">
+  <img src="https://i.ibb.co/0cS8WgR/pulsa.png"><br>Isi Pulsa
+ </div>
+</div>
+
+<div id="form" style="display:none">
+ <div class="card">
+  <h3 id="gameTitle"></h3>
+  <input id="idgame" oninput="handleInput()">
+ </div>
+ <div class="card">
+  <h3>Pilih Paket</h3>
+  <div id="paketList"></div>
+ </div>
+ <div class="card">
+  <h3>Pembayaran</h3>
+  <select id="payment"></select>
+ </div>
+ <button onclick="checkout()">Checkout WhatsApp</button>
+</div>
+</div>
+
+<footer>© 2026 Dhuha TopUp • Aman • Cepat • Terpercaya</footer>
+
+<script>
+const data={
+ "Free Fire":[
+ {name:"10 Diamonds",price:1690},{name:"15 Diamonds",price:2690},
+ {name:"20 Diamonds",price:3690},{name:"30 Diamonds",price:4690},
+ {name:"40 Diamonds",price:6690},{name:"60 Diamonds",price:8690},
+ {name:"75 Diamonds",price:9690},{name:"80 Diamonds",price:10690},
+ {name:"95 Diamonds",price:12690},{name:"100 Diamonds",price:13690},
+ {name:"130 Diamonds",price:17690},{name:"150 Diamonds",price:19690},
+ {name:"160 Diamonds",price:21690},{name:"180 Diamonds",price:23690},
+ {name:"200 Diamonds",price:25690},{name:"210 Diamonds",price:26690},
+ {name:"250 Diamonds",price:32690},{name:"280 Diamonds",price:35690},
+ {name:"300 Diamonds",price:38690},{name:"355 Diamonds",price:44690},
+ {name:"400 Diamonds",price:50690},{name:"500 Diamonds",price:62690},
+ {name:"515 Diamonds",price:65690},{name:"600 Diamonds",price:76690},
+ {name:"720 Diamonds",price:88690},{name:"790 Diamonds",price:98690},
+ {name:"860 Diamonds",price:106690},{name:"1000 Diamonds",price:124690},
+ {name:"FF Level Up Pass Lv 6",price:6690},
+ {name:"FF Level Up Pass Lv 10",price:9690},
+ {name:"FF Level Up Pass Lv 20 A",price:10690},
+ {name:"FF Level Up Pass Lv 20 B",price:14690},
+ {name:"FF BP Card",price:42690}
+ ],
+ "Mobile Legends":[
+ {name:"56 Diamonds",price:14690},{name:"60 Diamonds",price:15690},
+ {name:"65 Diamonds",price:16690},{name:"71 Diamonds",price:17690},
+ {name:"80 Diamonds",price:20690},{name:"86 Diamonds",price:21690},
+ {name:"100 Diamonds",price:25690},{name:"110 Diamonds",price:27690},
+ {name:"128 Diamonds",price:32690},{name:"140 Diamonds",price:35690},
+ {name:"170 Diamonds",price:42690},{name:"200 Diamonds",price:50690},
+ {name:"257 Diamonds",price:63690},{name:"300 Diamonds",price:72690},
+ {name:"344 Diamonds",price:83690},{name:"400 Diamonds",price:96690},
+ {name:"514 Diamonds",price:123690},{name:"600 Diamonds",price:145690},
+ {name:"706 Diamonds",price:170690},{name:"878 Diamonds",price:210690},
+ {name:"1050 Diamonds",price:250690},
+ {name:"Twilight Pass",price:142690},
+ {name:"Weekly Diamond Pass",price:28790}
+ ],
+ "Bloods Strike":[
+ {name:"100 Gold",price:12890},{name:"300 Gold",price:34290},
+ {name:"500 Gold",price:56790},{name:"1000 Gold",price:117690},
+ {name:"Level Up Pass",price:26290}
+ ],
+ "Pulsa":[
+ {name:"5000",price:6500},{name:"10000",price:11200},
+ {name:"15000",price:16000},{name:"20000",price:20999},
+ {name:"25000",price:25999},{name:"30000",price:30999},
+ {name:"35000",price:35999},{name:"40000",price:40750},
+ {name:"45000",price:45750},{name:"50000",price:50750},
+ {name:"55000",price:55750},{name:"60000",price:60700},
+ {name:"65000",price:65700},{name:"70000",price:70700},
+ {name:"75000",price:75700},{name:"80000",price:80600},
+ {name:"85000",price:85600},{name:"90000",price:90600},
+ {name:"95000",price:95600},{name:"100000",price:100500},
+ {name:"150000",price:150500},{name:"200000",price:200500}
+ ]
+};
+
+let game="",selected=null;
+
+function selectGame(g){
+ game=g;selected=null;
+ form.style.display="block";
+ gameTitle.innerText="Top Up "+g;
+ idgame.value="";
+
+ if(g==="Free Fire") idgame.placeholder="Masukkan ID FF (hanya angka)";
+ else if(g==="Mobile Legends") idgame.placeholder="Masukkan ID ML (Server)";
+ else if(g==="Pulsa") idgame.placeholder="Masukkan Nomor HP";
+ else idgame.placeholder="Masukkan ID";
+
+ payment.innerHTML="";
+ if(g==="Pulsa") payment.innerHTML="<option>QRIS DavPay</option>";
+ else payment.innerHTML="<option>DANA</option><option>GOPAY</option><option>QRIS DavPay</option>";
+
+ paketList.innerHTML="";
+ data[g].forEach(p=>{
+  const d=document.createElement("div");
+  d.className="paket";
+  d.innerHTML=`<b>${p.name}</b><br>Rp ${p.price.toLocaleString()}`;
+  d.onclick=()=>{
+   document.querySelectorAll(".paket").forEach(x=>x.classList.remove("active"));
+   d.classList.add("active");
+   selected=p;
+  };
+  paketList.appendChild(d);
+ });
+}
+
+function handleInput(){
+ if(game==="Free Fire") idgame.value=idgame.value.replace(/\D/g,"");
+ else if(game==="Mobile Legends") idgame.value=idgame.value.replace(/[^0-9()]/g,"");
+ else if(game==="Pulsa"){
+  let v=idgame.value.replace(/\D/g,"");
+  if(v.startsWith("0")) v="62"+v.slice(1);
+  else if(v.startsWith("8")) v="62"+v;
+  idgame.value=v;
+ }
+}
+
+function checkout(){
+ if(!idgame.value||!selected){alert("Lengkapi data");return;}
+ const text=
+`TOP UP
+Game: ${game}
+ID: ${idgame.value}
+Paket: ${selected.name}
+Harga: Rp ${selected.price.toLocaleString()}
+Pembayaran: ${payment.value}`;
+ window.open("https://wa.me/6285167169821?text="+encodeURIComponent(text));
+}
+</script>
+</body>
+</html>
